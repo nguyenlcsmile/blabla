@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Manager Customers
+
+Resources:
+  UserApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowOrigin: "'*'"
+        AllowHeaders: "'*'"
+        AllowMethods: "'*'"
+
+  MyTemplate:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.index
+      Runtime: python3.8
+      Timeout: 180
+      CodeUri: services/
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - AmazonS3FullAccess
