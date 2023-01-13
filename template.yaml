@@ -3,15 +3,6 @@ Transform: AWS::Serverless-2016-10-31
 Description: Manager Customers
 
 Resources:
-  UserApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      Cors:
-        AllowOrigin: "'*'"
-        AllowHeaders: "'*'"
-        AllowMethods: "'*'"
-
   MyTemplate:
     Type: AWS::Serverless::Function
     Properties:
