@@ -475,7 +475,7 @@ def index(event, context):
         # print('env:', env_id)
         # print('bucket:', bucket)
 
-        obj_entry = s3.get_object(Bucket='uams', Key=key_s3)
+        obj_entry = s3.get_object(Bucket='uamss', Key=key_s3)
         print('obj_entry', obj_entry)
         data_raw = obj_entry['Body'].read().decode()
         print('data_raw', data_raw)
@@ -500,7 +500,7 @@ def index(event, context):
         print('json dumps', json.dumps(result))
         res_put = s3.put_object(
             Body=json.dumps(result),  # json dumps object
-            Bucket='uams',
+            Bucket='uamss',
             Key=put_s3
         )
         print('res_put', res_put)
