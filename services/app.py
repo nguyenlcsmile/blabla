@@ -467,44 +467,52 @@ def myconverter(o):
     if isinstance(o, Decimal):
         return int(o)
 
+def calculate_day_previous(FORMAT, day):
+    result = datetime.now() - timedelta(days=day)
+    return result.strftime(FORMAT)
+
 def index(event, context):
     try:
-        file_name = event.get('file_name', '')
-        key_s3 = f"DATA/PROD/LOGS/{file_name}/RECORD_TODAY_1.json"
-        print('Check key s3:', key_s3)
-        s3 = _load_s3()
-        # print('env:', env_id)
-        # print('bucket:', bucket)
+        for i in range(1, 13):
+            try:
+                date_time = calculate_day_previous("%Y/%m/%d", i)
+                key_s3 = f"DATA/PROD/LOGS/{date_time}/RECORD_TODAY_1.json"
+                print('Check key s3:', key_s3)
+                s3 = _load_s3()
+                # print('env:', env_id)
+                # print('bucket:', bucket)
 
-        obj_entry = s3.get_object(Bucket='uamss', Key=key_s3)
-        print('obj_entry', obj_entry)
-        data_raw = obj_entry['Body'].read().decode()
-        print('data_raw', data_raw)
-        csvStringIO = io.StringIO(data_raw)
-        # print('Check csv String IO')
-        print('Check csvStringIO:', csvStringIO)
-        read_json = pd.read_json(csvStringIO, lines=True)
-        # print('>>>Check read_json:', read_json)
-        format_dict = read_json.fillna('').to_dict('records')
-        print('>>>Check format_dict:', format_dict)
-        data_s3 = json.loads(json.dumps(
-            format_dict, default=myconverter))
-        print('Check data_s3:', data_s3)
-        # data_s3 = json.loads(data_raw)
-        result = filter_count_log_v2(data_s3, {})
-        # print('Check result:', result)
-        # DO NOT STORE TO S3 WEEK & MONTH
+                obj_entry = s3.get_object(Bucket='uamss', Key=key_s3)
+                print('obj_entry', obj_entry)
+                data_raw = obj_entry['Body'].read().decode()
+                print('data_raw', data_raw)
+                csvStringIO = io.StringIO(data_raw)
+                # print('Check csv String IO')
+                print('Check csvStringIO:', csvStringIO)
+                read_json = pd.read_json(csvStringIO, lines=True)
+                # print('>>>Check read_json:', read_json)
+                format_dict = read_json.fillna('').to_dict('records')
+                print('>>>Check format_dict:', format_dict)
+                data_s3 = json.loads(json.dumps(
+                    format_dict, default=myconverter))
+                print('Check data_s3:', data_s3)
+                # data_s3 = json.loads(data_raw)
+                result = filter_count_log_v2(data_s3, {})
+                # print('Check result:', result)
+                # DO NOT STORE TO S3 WEEK & MONTH
 
-        put_s3 = f"DATA/PROD/LOGS/{file_name}/MONITORLOG_TODAY.json"
-        print('Check key put s3:', put_s3)
-        print('type', type(result))
-        print('json dumps', json.dumps(result))
-        res_put = s3.put_object(
-            Body=json.dumps(result),  # json dumps object
-            Bucket='uamss',
-            Key=put_s3
-        )
-        print('res_put', res_put)
+                put_s3 = f"DATA/PROD/LOGS/{date_time}/MONITORLOG_TODAY.json"
+                print('Check key put s3:', put_s3)
+                print('type', type(result))
+                print('json dumps', json.dumps(result))
+                res_put = s3.put_object(
+                    Body=json.dumps(result),  # json dumps object
+                    Bucket='uamss',
+                    Key=put_s3
+                )
+                print('res_put', res_put)
+            except:
+                pass
 
     except Exception as e:
         print('Exception', e)
