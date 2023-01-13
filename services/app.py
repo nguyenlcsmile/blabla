@@ -469,6 +469,8 @@ def myconverter(o):
 
 def index(event, context):
     try:
+        file_name = event.get('file_name', '')
+        key_s3 = f"DATA/PROD/LOGS/{file_name}/MONITORLOG/RECORD_TODAY_1.json"
         key_s3 = f"RECORD_TODAY_1.json"
         print('Check key s3:', key_s3)
         s3 = _load_s3()
@@ -494,7 +496,7 @@ def index(event, context):
         # print('Check result:', result)
         # DO NOT STORE TO S3 WEEK & MONTH
 
-        put_s3 = "MONITORLOG_TODAY.json"
+        put_s3 = f"DATA/PROD/LOGS/{file_name}/MONITORLOG/MONITORLOG_TODAY.json"
         print('Check key put s3:', put_s3)
         print('type', type(result))
         print('json dumps', json.dumps(result))
