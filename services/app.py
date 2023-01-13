@@ -471,7 +471,6 @@ def index(event, context):
     try:
         file_name = event.get('file_name', '')
         key_s3 = f"DATA/PROD/LOGS/{file_name}/MONITORLOG/RECORD_TODAY_1.json"
-        key_s3 = f"RECORD_TODAY_1.json"
         print('Check key s3:', key_s3)
         s3 = _load_s3()
         # print('env:', env_id)
